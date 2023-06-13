@@ -36,8 +36,8 @@ async function run() {
       res.send(result);
     })
 
-    // // verify level
-    app.get('/users/:email', async (req, res) => {
+    // // verify role
+    app.get('/users/role/:email', async (req, res) => {
       const email = req.params.email;
       const query = { email: email };
       const user = await usersCollection.findOne(query);
@@ -56,6 +56,46 @@ async function run() {
 
       res.send(result);
     });
+
+    // change role 
+    // app.patch('/users/role/:id', async (req, res) => {
+    //   const id = req.params.id
+    //   const query = { _id: new ObjectId(id) }
+    //   const updateDoc = {
+    //     $set: {
+    //       role: 'admin'
+    //     },
+    //   }
+    //   const update = await usersCollection.updateOne(query, updateDoc)
+    //   res.send(update)
+    // })
+
+    app.patch('/users/role/:id', async (req, res) => {
+      const id = req.params.id;
+      const newRole = req.body.role; // role is sent in the request body
+  
+      // Check that newRole is either 'admin' or 'instructor'
+      if (!['admin', 'instructor'].includes(newRole)) {
+          return res.status(400).json({ message: 'Invalid role. Role should be either "admin" or "instructor"' });
+      }
+  
+      const query = { _id: new ObjectId(id) };
+      const updateDoc = {
+          $set: {
+              role: newRole,
+          },
+      };
+      try {
+          const update = await usersCollection.updateOne(query, updateDoc);
+          res.json(update);
+      } catch (err) {
+          console.error(err);
+          res.status(500).json({ message: 'Internal server error' });
+      }
+  });
+  
+
+
 
 
 
