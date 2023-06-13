@@ -61,27 +61,27 @@ async function run() {
     app.patch('/users/role/:id', async (req, res) => {
       const id = req.params.id;
       const newRole = req.body.role; // role is sent in the request body
-  
+
       // Check that newRole is either 'admin' or 'instructor'
       if (!['admin', 'instructor'].includes(newRole)) {
-          return res.status(400).json({ message: 'Invalid role. Role should be either "admin" or "instructor"' });
+        return res.status(400).json({ message: 'Invalid role. Role should be either "admin" or "instructor"' });
       }
-  
+
       const query = { _id: new ObjectId(id) };
       const updateDoc = {
-          $set: {
-              role: newRole,
-          },
+        $set: {
+          role: newRole,
+        },
       };
       try {
-          const update = await usersCollection.updateOne(query, updateDoc);
-          res.json(update);
+        const update = await usersCollection.updateOne(query, updateDoc);
+        res.json(update);
       } catch (err) {
-          console.error(err);
-          res.status(500).json({ message: 'Internal server error' });
+        console.error(err);
+        res.status(500).json({ message: 'Internal server error' });
       }
-  });
-  
+    });
+
 
     app.post('/users', async (req, res) => {
       const user = req.body;
@@ -99,34 +99,54 @@ async function run() {
     // ----------- classes related apis --------
 
     // get all classes
-    
+    app.get('/classes', async (req, res) => {
+      const result = await classesCollection.find().toArray()
+      res.send(result)
+    })
+
 
 
     // get classes for specific email/user
-    app.get('/classes/:email', async(req, res)=>{
+    app.get('/classes/:email', async (req, res) => {
       const email = req.params.email;
-    
+
       if (!email) {
         return res.status(400).send({ error: 'Invalid email' });
       }
-      
+
       const query = { email: email };
       const result = await classesCollection.find(query).toArray();
-    
+
       if (result.length === 0) {
         return res.status(404).send({ error: 'No classes found for this email' });
       }
-    
+
       res.send(result);
     });
-    
-    
+
+
     // add a class
-    app.post('/classes', async(req, res)=>{
+    app.post('/classes', async (req, res) => {
       const allClasses = req.body;
       const result = await classesCollection.insertOne(allClasses)
       res.send(result)
     })
+
+    // update status of a class
+    app.patch('/classes/:id', async (req, res) => {
+      const id = req.params.id;
+      // console.log(id);
+      const newStatus = req.body.status;
+      // console.log(newStatus);
+      const query = { _id: new ObjectId(id) }
+      const updateDoc = {
+        $set: {
+          status: newStatus,
+        },
+      };
+      const result = await classesCollection.updateOne(query, updateDoc);
+      res.send(result);
+    });
 
 
 
