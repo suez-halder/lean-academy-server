@@ -99,11 +99,27 @@ async function run() {
     // ----------- classes related apis --------
 
     // get all classes
-    app.get('/classes', async(req, res)=>{
-      const allClasses = req.body;
-      const result = await classesCollection.find().toArray()
-      res.send()
-    })
+    
+
+
+    // get classes for specific email/user
+    app.get('/classes/:email', async(req, res)=>{
+      const email = req.params.email;
+    
+      if (!email) {
+        return res.status(400).send({ error: 'Invalid email' });
+      }
+      
+      const query = { email: email };
+      const result = await classesCollection.find(query).toArray();
+    
+      if (result.length === 0) {
+        return res.status(404).send({ error: 'No classes found for this email' });
+      }
+    
+      res.send(result);
+    });
+    
     
     // add a class
     app.post('/classes', async(req, res)=>{
