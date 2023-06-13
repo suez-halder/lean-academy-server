@@ -29,13 +29,36 @@ async function run() {
   try {
     const usersCollection = client.db('leanAcademyDb').collection('users')
 
-     // users related apis
-     app.get('/users', async (req, res) => {
-      const result = await usersCollection.find().toArray(); 
+    // users related apis
+    // get all users
+    app.get('/users', async (req, res) => {
+      const result = await usersCollection.find().toArray();
       res.send(result);
     })
-    
-    
+
+    // // verify level
+    app.get('/users/:email', async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const user = await usersCollection.findOne(query);
+      // console.log(user);
+
+      let result;
+      if (user) {
+        result = {
+          isStudent: user.role === 'student',
+          isInstructor: user.role === 'instructor',
+          isAdmin: user.role === 'admin',
+        };
+      } else {
+        result = { error: 'No user found with that email.' };
+      }
+
+      res.send(result);
+    });
+
+
+
     app.post('/users', async (req, res) => {
       const user = req.body;
       const query = { email: user.email };
@@ -44,8 +67,9 @@ async function run() {
       if (existingUser) {
         return res.send({ message: 'user already exists' })
       }
-      const result = usersCollection.insertOne(user);
+      const result = await usersCollection.insertOne(user);
       res.send(result);
+      // console.log(result);
     })
 
 
