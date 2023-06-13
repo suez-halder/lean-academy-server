@@ -28,8 +28,9 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const usersCollection = client.db('leanAcademyDb').collection('users')
+    const classesCollection = client.db('leanAcademyDb').collection('classes')
 
-    // users related apis
+    // ----------- users related apis --------
     // get all users
     app.get('/users', async (req, res) => {
       const result = await usersCollection.find().toArray();
@@ -57,19 +58,6 @@ async function run() {
       res.send(result);
     });
 
-    // change role 
-    // app.patch('/users/role/:id', async (req, res) => {
-    //   const id = req.params.id
-    //   const query = { _id: new ObjectId(id) }
-    //   const updateDoc = {
-    //     $set: {
-    //       role: 'admin'
-    //     },
-    //   }
-    //   const update = await usersCollection.updateOne(query, updateDoc)
-    //   res.send(update)
-    // })
-
     app.patch('/users/role/:id', async (req, res) => {
       const id = req.params.id;
       const newRole = req.body.role; // role is sent in the request body
@@ -95,10 +83,6 @@ async function run() {
   });
   
 
-
-
-
-
     app.post('/users', async (req, res) => {
       const user = req.body;
       const query = { email: user.email };
@@ -110,6 +94,13 @@ async function run() {
       const result = await usersCollection.insertOne(user);
       res.send(result);
       // console.log(result);
+    })
+
+    // ----------- classes related apis --------
+    app.post('/classes', async(req, res)=>{
+      const addClass = req.body;
+      const result = await classesCollection.insertOne(addClass)
+      res.send(result)
     })
 
 
