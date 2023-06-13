@@ -97,9 +97,18 @@ async function run() {
     })
 
     // ----------- classes related apis --------
+
+    // get all classes
+    app.get('/classes', async(req, res)=>{
+      const allClasses = req.body;
+      const result = await classesCollection.find().toArray()
+      res.send()
+    })
+    
+    // add a class
     app.post('/classes', async(req, res)=>{
-      const addClass = req.body;
-      const result = await classesCollection.insertOne(addClass)
+      const allClasses = req.body;
+      const result = await classesCollection.insertOne(allClasses)
       res.send(result)
     })
 
