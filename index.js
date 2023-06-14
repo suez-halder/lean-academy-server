@@ -129,6 +129,13 @@ async function run() {
       res.send(result)
     })
 
+    // app.get('/class/:id', async(req, res)=>{
+    //   const id = req.params.id;
+    //   const query = {_id: new ObjectId(id)}
+    //   const result = await classesCollection.findOne(query)
+    //   res.send(result)
+    // })
+
 
 
     // get classes for specific email/user
@@ -219,6 +226,52 @@ async function run() {
     //   // console.log(result);
     //   res.send(result);
     // });
+
+    // edit a single class
+    app.patch('/classes/edit/:id', async (req, res) => {
+      // local server work properly, but vercel deploy shows cors error
+				res.setHeader('Access-Control-Allow-Origin', '*') // Allow requests from any origin (replace '*' with the specific origin if needed)
+	      res.setHeader('Access-Control-Allow-Methods', 'PATCH'); // Allow the PUT method
+	      res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); // Allow the 'Content-Type' header
+	      res.setHeader(
+	        'Access-Control-Allow-Headers',
+	        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+	      )
+      const id = req.params.id;
+      // console.log(id);
+      const query = { _id: new ObjectId(id) }
+
+      const updateDoc = {
+        $set: {
+          seats: seats,
+          price: price,
+
+        },
+      };
+      const result = await classesCollection.updateOne(query, updateDoc);
+      res.send(result);
+    });
+
+
+    // edit a class in db
+    app.put('/classes/:id', async (req, res) => {
+      const { className, image, seats, price } = req.body;
+      // console.log(seats, price)
+    
+      const filter = { _id: new ObjectId(req.params.id) }
+      const options = { upsert: true }
+      const updateDoc = {
+        $set: {
+          className,
+          image,
+          seats,
+          price,
+        }
+      };
+      const result = await classesCollection.updateOne(filter, updateDoc, options)
+      res.send(result)
+    });
+    
 
 
     // ----------- selected related apis --------
