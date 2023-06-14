@@ -76,6 +76,14 @@ async function run() {
     });
 
     app.patch('/users/role/:id', async (req, res) => {
+      // local server work properly, but vercel deploy shows cors error
+				res.setHeader('Access-Control-Allow-Origin', '*') // Allow requests from any origin (replace '*' with the specific origin if needed)
+	      res.setHeader('Access-Control-Allow-Methods', 'PATCH'); // Allow the PUT method
+	      res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); // Allow the 'Content-Type' header
+	      res.setHeader(
+	        'Access-Control-Allow-Headers',
+	        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+	      )
       const id = req.params.id;
       const newRole = req.body.role; // role is sent in the request body
 
@@ -151,6 +159,14 @@ async function run() {
 
     // update status of a class
     app.patch('/classes/:id', async (req, res) => {
+      // local server work properly, but vercel deploy shows cors error
+				res.setHeader('Access-Control-Allow-Origin', '*') // Allow requests from any origin (replace '*' with the specific origin if needed)
+	      res.setHeader('Access-Control-Allow-Methods', 'PATCH'); // Allow the PUT method
+	      res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); // Allow the 'Content-Type' header
+	      res.setHeader(
+	        'Access-Control-Allow-Headers',
+	        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+	      )
       const id = req.params.id;
       // console.log(id);
       const newStatus = req.body.status;
@@ -167,6 +183,14 @@ async function run() {
 
     // decrease seat if select button is clicked on Classes page
     app.patch('/classes/seats/:id', async (req, res) => {
+      // local server work properly, but vercel deploy shows cors error
+				res.setHeader('Access-Control-Allow-Origin', '*') // Allow requests from any origin (replace '*' with the specific origin if needed)
+	      res.setHeader('Access-Control-Allow-Methods', 'PATCH'); // Allow the PUT method
+	      res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); // Allow the 'Content-Type' header
+	      res.setHeader(
+	        'Access-Control-Allow-Headers',
+	        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+	      )
       const id = req.params.id;
       // console.log(id);
       const query = { _id: new ObjectId(id) }
