@@ -29,6 +29,7 @@ async function run() {
   try {
     const usersCollection = client.db('leanAcademyDb').collection('users')
     const classesCollection = client.db('leanAcademyDb').collection('classes')
+    const selectedCollection = client.db('leanAcademyDb').collection('selected')
 
     // ----------- users related apis --------
     // get all users
@@ -147,6 +148,30 @@ async function run() {
       const result = await classesCollection.updateOne(query, updateDoc);
       res.send(result);
     });
+
+    app.patch('/classes/seats/:id', async (req, res) => {
+      const id = req.params.id;
+      // console.log(id);
+      const query = { _id: new ObjectId(id) }
+      const updateDoc = {
+        $inc: {
+          seats: -1,
+        },
+      };
+      const result = await classesCollection.updateOne(query, updateDoc);
+      res.send(result);
+    });
+
+
+
+
+    // ----------- selected related apis --------
+    // select a class
+    app.post('/selected', async (req, res) => {
+      const selectedClasses = req.body;
+      const result = await selectedCollection.insertOne(selectedClasses)
+      res.send(result)
+    })
 
 
 
