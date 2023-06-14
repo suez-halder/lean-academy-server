@@ -149,6 +149,7 @@ async function run() {
       res.send(result);
     });
 
+    // decrease seat if select button is clicked on Classes page
     app.patch('/classes/seats/:id', async (req, res) => {
       const id = req.params.id;
       // console.log(id);
@@ -163,7 +164,21 @@ async function run() {
       res.send(result);
     });
 
-
+    // // increase seat if delete button is clicked on selectedClasses
+    // app.patch('/classes/increaseSeats/:id', async (req, res) => {
+    //   const id = req.params.id;
+    //   const query = { _id: new ObjectId(id) };
+    //   // console.log(id, query)
+    //   const updateDoc = {
+    //     $inc: {
+    //       seats: 1,
+    //     },
+    //   };
+    //   // console.log(updateDoc);
+    //   const result = await classesCollection.updateOne(query, updateDoc);
+    //   // console.log(result);
+    //   res.send(result);
+    // });
 
 
     // ----------- selected related apis --------
@@ -179,14 +194,14 @@ async function run() {
       const query = { studentEmail: email };
       const result = await selectedCollection.find(query).toArray();
 
-      if (result.length === 0) {
-        return res.status(404).send({ error: 'No classes found for this email' });
-      }
+      // if (result.length === 0) {
+      //   return res.status(404).send({ error: 'No classes found for this email' });
+      // }
 
       res.send(result);
     })
-    
-    
+
+
     // select a class
     app.post('/selected', async (req, res) => {
       const selectedClasses = req.body;
@@ -194,12 +209,14 @@ async function run() {
       res.send(result)
     })
 
-    app.delete('/selected/:id', async(req, res)=>{
+    app.delete('/selected/:id', async (req, res) => {
       const id = req.params.id;
-      const query = {_id: new ObjectId(id)}
+      const query = { _id: new ObjectId(id) }
       const result = await selectedCollection.deleteOne(query)
       res.send(result)
     })
+
+
 
 
 
