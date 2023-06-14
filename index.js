@@ -3,6 +3,7 @@ const app = express()
 const cors = require('cors')
 require('dotenv').config()
 const port = process.env.PORT || 3000
+const stripe = require("stripe")(process.env.PAYMENT_SECRET_KEY);
 
 // middleware
 const corsOptions = {
@@ -30,6 +31,21 @@ async function run() {
     const usersCollection = client.db('leanAcademyDb').collection('users')
     const classesCollection = client.db('leanAcademyDb').collection('classes')
     const selectedCollection = client.db('leanAcademyDb').collection('selected')
+
+    // generate client secret
+    app.post('/create-payment-intent', async (req, res) => {
+      const { price } = req.body;
+      // console.log(price);
+      if (price) {
+        const amount = parseFloat(price) * 100
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount: amount,
+          currency: 'usd',
+          payment_method_types: ['card']
+        })
+        res.send({ clientSecret: paymentIntent.client_secret })
+      }
+    })
 
     // ----------- users related apis --------
     // get all users
@@ -182,6 +198,11 @@ async function run() {
 
 
     // ----------- selected related apis --------
+    // get all selected class
+    app.get('/selected', async (req, res) => {
+      const result = await selectedCollection.find().toArray()
+      res.send(result)
+    })
 
     // get a single class for a user
     app.get('/selected/:email', async (req, res) => {
@@ -200,6 +221,9 @@ async function run() {
 
       res.send(result);
     })
+
+
+
 
 
     // select a class
