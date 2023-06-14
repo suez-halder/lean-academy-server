@@ -204,6 +204,20 @@ async function run() {
       res.send(result)
     })
 
+    // get enrolled class by instructors email
+    app.get('/selected/paid/:email', async (req, res) => {
+      const email = req.params.email;
+      try {
+        const result = await selectedCollection.find({ email: email, transactionId: { $exists: true } }).toArray();
+        res.send(result);
+      } catch (err) {
+        console.log(err);
+        res.status(500).send('Error occurred while fetching data');
+      }
+    });
+
+
+
     // get a single class for a user
     app.get('/selected/:email', async (req, res) => {
       const email = req.params.email;
