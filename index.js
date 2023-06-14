@@ -153,6 +153,7 @@ async function run() {
       const id = req.params.id;
       // console.log(id);
       const query = { _id: new ObjectId(id) }
+
       const updateDoc = {
         $inc: {
           seats: -1,
@@ -166,12 +167,41 @@ async function run() {
 
 
     // ----------- selected related apis --------
+
+    // get a single class for a user
+    app.get('/selected/:email', async (req, res) => {
+      const email = req.params.email;
+
+      if (!email) {
+        return res.status(400).send({ error: 'Invalid email' });
+      }
+
+      const query = { studentEmail: email };
+      const result = await selectedCollection.find(query).toArray();
+
+      if (result.length === 0) {
+        return res.status(404).send({ error: 'No classes found for this email' });
+      }
+
+      res.send(result);
+    })
+    
+    
     // select a class
     app.post('/selected', async (req, res) => {
       const selectedClasses = req.body;
       const result = await selectedCollection.insertOne(selectedClasses)
       res.send(result)
     })
+
+    app.delete('/selected/:id', async(req, res)=>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await selectedCollection.deleteOne(query)
+      res.send(result)
+    })
+
+
 
 
 
