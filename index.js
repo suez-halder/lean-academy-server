@@ -54,6 +54,16 @@ async function run() {
       res.send(result);
     })
 
+    // get all instructors
+    app.get('/users/instructors', async (req, res) => {
+      const query = { role: 'instructor' };
+      const result = await usersCollection.find(query).toArray();
+      res.send(result);
+    })
+
+
+
+
     // // verify role
     app.get('/users/role/:email', async (req, res) => {
       const email = req.params.email;
@@ -77,13 +87,13 @@ async function run() {
 
     app.patch('/users/role/:id', async (req, res) => {
       // local server work properly, but vercel deploy shows cors error
-				res.setHeader('Access-Control-Allow-Origin', '*') // Allow requests from any origin (replace '*' with the specific origin if needed)
-	      res.setHeader('Access-Control-Allow-Methods', 'PATCH'); // Allow the PUT method
-	      res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); // Allow the 'Content-Type' header
-	      res.setHeader(
-	        'Access-Control-Allow-Headers',
-	        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
-	      )
+      res.setHeader('Access-Control-Allow-Origin', '*') // Allow requests from any origin (replace '*' with the specific origin if needed)
+      res.setHeader('Access-Control-Allow-Methods', 'PATCH'); // Allow the PUT method
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); // Allow the 'Content-Type' header
+      res.setHeader(
+        'Access-Control-Allow-Headers',
+        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+      )
       const id = req.params.id;
       const newRole = req.body.role; // role is sent in the request body
 
@@ -135,7 +145,7 @@ async function run() {
     //   const result = await classesCollection.findOne(query)
     //   res.send(result)
     // })
-    
+
 
 
 
@@ -169,13 +179,13 @@ async function run() {
     // update status of a class
     app.patch('/classes/:id', async (req, res) => {
       // local server work properly, but vercel deploy shows cors error
-				res.setHeader('Access-Control-Allow-Origin', '*') // Allow requests from any origin (replace '*' with the specific origin if needed)
-	      res.setHeader('Access-Control-Allow-Methods', 'PATCH'); // Allow the PUT method
-	      res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); // Allow the 'Content-Type' header
-	      res.setHeader(
-	        'Access-Control-Allow-Headers',
-	        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
-	      )
+      res.setHeader('Access-Control-Allow-Origin', '*') // Allow requests from any origin (replace '*' with the specific origin if needed)
+      res.setHeader('Access-Control-Allow-Methods', 'PATCH'); // Allow the PUT method
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); // Allow the 'Content-Type' header
+      res.setHeader(
+        'Access-Control-Allow-Headers',
+        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+      )
       const id = req.params.id;
       // console.log(id);
       const newStatus = req.body.status;
@@ -193,13 +203,13 @@ async function run() {
     // decrease seat if select button is clicked on Classes page
     app.patch('/classes/seats/:id', async (req, res) => {
       // local server work properly, but vercel deploy shows cors error
-				res.setHeader('Access-Control-Allow-Origin', '*') // Allow requests from any origin (replace '*' with the specific origin if needed)
-	      res.setHeader('Access-Control-Allow-Methods', 'PATCH'); // Allow the PUT method
-	      res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); // Allow the 'Content-Type' header
-	      res.setHeader(
-	        'Access-Control-Allow-Headers',
-	        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
-	      )
+      res.setHeader('Access-Control-Allow-Origin', '*') // Allow requests from any origin (replace '*' with the specific origin if needed)
+      res.setHeader('Access-Control-Allow-Methods', 'PATCH'); // Allow the PUT method
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); // Allow the 'Content-Type' header
+      res.setHeader(
+        'Access-Control-Allow-Headers',
+        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+      )
       const id = req.params.id;
       // console.log(id);
       const query = { _id: new ObjectId(id) }
@@ -232,13 +242,13 @@ async function run() {
     // edit a single class
     app.patch('/classes/edit/:id', async (req, res) => {
       // local server work properly, but vercel deploy shows cors error
-				res.setHeader('Access-Control-Allow-Origin', '*') // Allow requests from any origin (replace '*' with the specific origin if needed)
-	      res.setHeader('Access-Control-Allow-Methods', 'PATCH'); // Allow the PUT method
-	      res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); // Allow the 'Content-Type' header
-	      res.setHeader(
-	        'Access-Control-Allow-Headers',
-	        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
-	      )
+      res.setHeader('Access-Control-Allow-Origin', '*') // Allow requests from any origin (replace '*' with the specific origin if needed)
+      res.setHeader('Access-Control-Allow-Methods', 'PATCH'); // Allow the PUT method
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); // Allow the 'Content-Type' header
+      res.setHeader(
+        'Access-Control-Allow-Headers',
+        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+      )
       const id = req.params.id;
       // console.log(id);
       const query = { _id: new ObjectId(id) }
@@ -259,7 +269,7 @@ async function run() {
     app.put('/classes/:id', async (req, res) => {
       const { className, image, seats, price } = req.body;
       // console.log(seats, price)
-    
+
       const filter = { _id: new ObjectId(req.params.id) }
       const options = { upsert: true }
       const updateDoc = {
@@ -273,7 +283,7 @@ async function run() {
       const result = await classesCollection.updateOne(filter, updateDoc, options)
       res.send(result)
     });
-    
+
 
 
     // ----------- selected related apis --------
