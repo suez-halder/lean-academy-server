@@ -267,6 +267,14 @@ async function run() {
 
     // edit a class in db
     app.put('/classes/:id', async (req, res) => {
+      // local server work properly, but vercel deploy shows cors error
+      res.setHeader('Access-Control-Allow-Origin', '*') // Allow requests from any origin (replace '*' with the specific origin if needed)
+      res.setHeader('Access-Control-Allow-Methods', 'PUT'); // Allow the PUT method
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); // Allow the 'Content-Type' header
+      res.setHeader(
+        'Access-Control-Allow-Headers',
+        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+      )
       const { className, image, seats, price } = req.body;
       // console.log(seats, price)
 
@@ -292,6 +300,35 @@ async function run() {
       const result = await selectedCollection.find().toArray()
       res.send(result)
     })
+
+    // get top 6 popular classes based on enrollment
+    app.get('/selected/popular', async (req, res) => {
+      const result = await selectedCollection.aggregate([
+        {
+          $match: {
+            transactionId: { $exists: true }
+          }
+        },
+        {
+          $group: {
+            _id: "$className",
+            count: { $sum: 1 },
+            image: { $first: "$image" },
+            price: { $first: "$price" }
+          }
+        },
+        {
+          $sort: {
+            count: -1
+          }
+        },
+        {
+          $limit: 6
+        }
+      ]).toArray();
+
+      res.send(result)
+    });
 
     // get enrolled class by instructors email
     app.get('/selected/paid/:email', async (req, res) => {
@@ -335,6 +372,30 @@ async function run() {
       const result = await selectedCollection.insertOne(selectedClasses)
       res.send(result)
     })
+
+    // // update transaction id to selected class
+    // app.patch('/selected/:id', async (req, res) => {
+    //   const { id } = req.params; // get id from parameters
+    //   const { transactionId } = req.body; // get transactionId from request body
+
+    //   try {
+    //     const result = await selectedCollection.updateOne(
+    //       { _id: new ObjectId(id) }, // filter: match the document with the given id
+    //       { $set: { transactionId: transactionId } } // update: set the transactionId
+    //     );
+
+    //     if (result.matchedCount > 0) {
+    //       res.send({ message: 'Successfully updated transactionId' });
+    //     } else {
+    //       res.status(404).send({ message: 'No document found with that id' });
+    //     }
+    //   } catch (error) {
+    //     res.status(500).send({ error: error.toString() });
+    //   }
+    // });
+
+
+
 
     app.delete('/selected/:id', async (req, res) => {
       const id = req.params.id;
